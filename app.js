@@ -1,5 +1,5 @@
 var keyboard = {};
-var player = { height: 1.8, speed: 0.2, turnSpeed: Math.PI * 0.02 };
+var player = { height: 1.8, speed: 20, turnSpeed: Math.PI * 0.02 };
 
 var nor = 400;  //taille arbre normal
 var sma = 240;  //taille petit arbre
@@ -9,35 +9,26 @@ var renderer,scene,camera,small,big,circle,material;
 var intensitythree = 1500;   //plus le nombre est grand moins il y a d'arbre. IL est conseille d'appleque une valeur au dessus de 700
 var numberofthree = (mapL / intensitythree) * (mapl / intensitythree);
 var camerasensibility = 5;
+var defaultColor = 'white';
+
+var ready = true;
 
 var animation = false;
 
-var Threelock = true;   //option
+var Threelock = false;   //option
 var mapLock = true;          //activation 
 var Ennemy = false;      //elements
 
 var BeginNight = 20;  //le mode nuit commence a cette heure la
 var EndNight = 8;     //le mode nuit fini a cette heure la
 
+
 var i = 0;
 var active = document.getElementById('turnOn');
 function init() {
     var k = 0;
-    active.addEventListener('click',function(){
-        if(k === 0){
-            active.style.background = '#e74c3c';
-            animation = true;
-            k = 1;
-            init();
-        }
-        else{
-            active.style.background = '#2ecc71';
-            animation = false;
-            k = 0;    
-            init();
-        }
-    })
-
+    //document.getElementById('turnOn').style.height = '0px';
+    //document.getElementById('turnOn').style.lineHeight = '0px';
     console.log("arbre: " + Threelock);
     console.log("ennemie: " + Ennemy);
     console.log("map: " + mapLock);
@@ -110,44 +101,55 @@ function init() {
     }
     
     camera.lookAt(light.position);
+    renderer.render(scene, camera);
     //RENDER LOOP
     var delta = 0;
-    if(animation){
-        requestAnimationFrame(render);
-        function render() {
-            delta += 0.02;
-            camera.lookAt(light.position);
-            camera.position.x = Math.sin(delta) * 5000;
-            camera.position.y = 150;
-            camera.position.z = Math.cos(delta) * 5000;
-            renderer.render(scene, camera);
+    if(ready){
+        active.addEventListener('click',function(){
+            if(k === 0){
+                active.style.background = '#e74c3c';
+                animation = true;
+                k = 1;
+                init();
+            }
+        })
+        if(animation){
             requestAnimationFrame(render);
-            active.addEventListener('click',function(){
-                active.style.background = '#2ecc71';
-                animation = false;
-                k = 0;
-            })
+            function render() {
+                delta += 0.02;
+                camera.lookAt(light.position);
+                camera.position.x = Math.sin(delta) * 5000;
+                camera.position.y = 150;
+                camera.position.z = Math.cos(delta) * 5000;
+                renderer.render(scene, camera);
+                requestAnimationFrame(render);
+            }
         }
-    }
-    document.addEventListener('mousemove', onMouseMove, false);
-    function onMouseMove(event) {
-        //var MouseX = event.clientX - window.innerWidth / 2;
-        var MouseY = event.clientY - window.innerHeight / 2;
-        //camera.position.x = - MouseX;
-        if(MouseY >= 40){
-            camera.rotation.x = -40 * (0.001 * camerasensibility);
+        document.addEventListener('mousemove', onMouseMove, false);
+        function onMouseMove(event) {
+            //var MouseX = event.clientX - window.innerWidth / 2;
+            var MouseY = event.clientY - window.innerHeight / 2;
+            //camera.position.x = - MouseX;
+            if(MouseY >= 40){
+                camera.rotation.x = -40 * (0.001 * camerasensibility);
+            }
+            else if(MouseY <= -75){
+                camera.rotation.x = 75 * (0.001 * camerasensibility);
+            }
+            else{
+                camera.rotation.x = -MouseY * (0.001 * camerasensibility);
+            }
+
+            //if(MouseX !== 0){                                 //I try to change the rotation
+            //    camera.rotation.y += MouseX;                  //of the camera and still have
+            //    event.clientX = 0 + window.innerWidth / 2;    //the cursor in the middle
+            //}
+            renderer.render(scene, camera);
         }
-        else if(MouseY <= -75){
-            camera.rotation.x = 75 * (0.001 * camerasensibility);
+        animate();
+        if(Ennemy){
+            AddEnnemy(1);
         }
-        else{
-            camera.rotation.x = -MouseY * (0.001 * camerasensibility);
-        }
-        renderer.render(scene, camera);
-    }
-    animate();
-    if(Ennemy){
-        AddEnnemy(1);
     }
 }
 
@@ -157,25 +159,24 @@ function animate() {
     
     // Keyboard movement inputs
     if (keyboard[87]) { // W key
-        //camera.position.x -= Math.sin(camera.rotation.y) * player.speed ;
-        //camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
-        camera.position.z -= Math.cos(0.1) * 50;
+        camera.position.x -= Math.sin(camera.rotation.y) * player.speed ;
+        camera.position.z += -Math.cos(camera.rotation.y) * player.speed;
+        //camera.position.z -= Math.cos(0.1) * 50;
     }
     if (keyboard[83]) { // S key
-        //camera.position.x += Math.sin(camera.rotation.y) * player.speed;
-        //camera.position.z += -Math.cos(camera.rotation.y) * player.speed;
-        camera.position.z += Math.cos(0.1) * 50;
+        camera.position.x += Math.sin(camera.rotation.y) * player.speed;
+        camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
     }
-    /*if (keyboard[65]) { // A key
+    if (keyboard[65]) { // A key
         // Redirect motion by 90 degrees
-        //camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * player.speed;
+        camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * player.speed;
         //camera.position.z += -Math.cos(camera.rotation.y + Math.PI / 2) * player.speed;
     }
     if (keyboard[68]) { // D key
         camera.position.x += Math.sin(camera.rotation.y - Math.PI / 2) * player.speed;
         camera.position.z += -Math.cos(camera.rotation.y - Math.PI / 2) * player.speed;
     }
-    */
+    
     // Keyboard turn inputs
     if (keyboard[37]) { // left arrow key
         camera.rotation.y += player.turnSpeed;
