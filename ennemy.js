@@ -30,34 +30,28 @@ function fall(elem) {
 
 
 var d;
-var v = 2;  //vitesse des ennemies. Plus elle est grande moins il vont vite
+var v = 40;  //f(1000) = 0.2 ; f(20) = 1 =/= 40, it's just a example
 var m;
-var StepTime;
+var Step;
 
-function follow(ennemy){                      //calcul de la distance
-    setInterval(function(ennemy){
-        m = camera.position.x;
-        ex = Math.floor(ennemy.position.x);
-        if(ex > 0){
-            d = ex - m;
-        }
-        if(ex < 0){
-            d = -ex + m;
-        }
-        if(d < 100){                        //calcul du delay en fonction de la distance
-            StepTime = 6 * (d * v);
-        }
-        else{
-            StepTime = 6 * (100 * v);
-        }
-        if(ex > 0){
-            ex += 1;
-        }
-        else{
-            ex -= 1;
-        }
-        console.log(ex);
-    },StepTime);
+function follow(ennemy) {                      //calcul de la distance
+
+    m = camera.position.x;
+    ex = Math.floor(ennemy.position.x);
+    if (ex > 0) {
+        d = ex - m;
+    }
+    else if (ex < 0) {
+        d = -ex + m;
+    }
+    if (d < 1000) {                        //calcul du delay en fonction de la distance
+        Step = d / 20;
+    }
+    else {
+        Step = 1000 * v;
+    }
+    console.log(ex);
+    ennemy.position.x += Step;
 }
 
 
