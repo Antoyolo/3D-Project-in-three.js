@@ -10,12 +10,18 @@ var intensitythree = 1500;   //plus le nombre est grand moins il y a d'arbre. IL
 var numberofthree = (mapL / intensitythree) * (mapl / intensitythree);
 var camerasensibility = 5;
 var defaultColor = 'white';
+var jumpforce = 40;
+var gravity = 0.8;
+var velocity = 0;
+var maxheight = 200;
+var p = 0;
 
+var btnActive = false;
 var ready = true;
 
 var animation = false;
 
-var Threelock = false;   //option
+var Threelock = true;   //option
 var mapLock = true;          //activation 
 var Ennemy = false;      //elements
 
@@ -105,14 +111,16 @@ function init() {
     //RENDER LOOP
     var delta = 0;
     if(ready){
-        active.addEventListener('click',function(){
-            if(k === 0){
-                active.style.background = '#e74c3c';
-                animation = true;
-                k = 1;
-                init();
-            }
-        })
+        if(btnActive){
+            active.addEventListener('click',function(){
+                if(k === 0){
+                    active.style.background = '#e74c3c';
+                    animation = true;
+                    k = 1;
+                    init();
+                }
+            })
+        }
         if(animation){
             requestAnimationFrame(render);
             function render() {
@@ -127,7 +135,7 @@ function init() {
         }
         document.addEventListener('mousemove', onMouseMove, false);
         function onMouseMove(event) {
-            //var MouseX = event.clientX - window.innerWidth / 2;
+            var MouseX = event.clientX - window.innerWidth / 2;
             var MouseY = event.clientY - window.innerHeight / 2;
             //camera.position.x = - MouseX;
             if(MouseY >= 40){
@@ -138,6 +146,16 @@ function init() {
             }
             else{
                 camera.rotation.x = -MouseY * (0.001 * camerasensibility);
+            }
+
+            if(MouseX >= 100){
+                camera.rotation.y = -100 * 0.002;
+            }
+            else if(MouseX <= -100){
+                camera.rotation.y = 100 * 0.002;
+            }
+            else{
+                camera.rotation.y = -MouseX * 0.002;
             }
 
             //if(MouseX !== 0){                                 //I try to change the rotation
@@ -156,7 +174,14 @@ function init() {
 function animate() {
     requestAnimationFrame(animate);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+    velocity += gravity;
+    velocity *= 0.9;
+    camera.position.y -= velocity;
+    if (camera.position.y < player.height) {
+      camera.position.y = player.height;
+      velocity = 0;
+      p = 0;
+    }
     // Keyboard movement inputs
     if (keyboard[87]) { // W key
         camera.position.x -= Math.sin(camera.rotation.y) * player.speed ;
@@ -167,12 +192,12 @@ function animate() {
         camera.position.x += Math.sin(camera.rotation.y) * player.speed;
         camera.position.z -= -Math.cos(camera.rotation.y) * player.speed;
     }
-    if (keyboard[65]) { // A key
+    if (keyboard[68]) { // D key
         // Redirect motion by 90 degrees
         camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * player.speed;
         //camera.position.z += -Math.cos(camera.rotation.y + Math.PI / 2) * player.speed;
     }
-    if (keyboard[68]) { // D key
+    if (keyboard[65]) { // A key
         camera.position.x += Math.sin(camera.rotation.y - Math.PI / 2) * player.speed;
         camera.position.z += -Math.cos(camera.rotation.y - Math.PI / 2) * player.speed;
     }
@@ -184,7 +209,16 @@ function animate() {
     if (keyboard[39]) { // right arrow key
         camera.rotation.y -= player.turnSpeed;
     }
-
+    if (keyboard[32]) { // SPACE key
+        console.log('space bar pressed');
+        if(p === 0){
+            camera.position.y += jumpforce;
+            if(camera.position.y > maxheight){
+                camera.position.y = maxheight;
+                p = 1;
+            }
+        }
+    }
     renderer.render(scene, camera);
 }
 
