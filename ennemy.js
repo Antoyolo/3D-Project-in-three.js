@@ -3,55 +3,163 @@ var ball = new THREE.CubeGeometry(120, 120, 120);
 var skin = new THREE.MeshLambertMaterial({
     color: 0xF3FFE2
 });
-
-var ex;
+var enn;
+var generate = false;
 function AddEnnemy(number) {
     for (var n = 0; n < number; n++) {
-        var enn = new THREE.Mesh(body, skin);
-        var x = Math.floor(Math.random() * 2000) - 1000;
-        var y = Math.floor(Math.random() * 2000) - 1000;
+        enn = new THREE.Mesh(body, skin);
+        var x = Math.floor(Math.random() * 10000) - 5000;
+        var z = Math.floor(Math.random() * 10000) - 5000;
+        while( x > -500 && x < 500){
+            x = Math.floor(Math.random() * 10000) - 5000;
+        }
+        while( z > -500 && z < 500){
+            z = Math.floor(Math.random() * 10000) - 5000;
+        }
         //enn.position.set(x, 150, y);
-        enn.position.set(x, 150, 0);
+        enn.position.set(x, 15, z);
         scene.add(enn);
-        //fall(enn);
-        follow(enn);
+        generate = true;
     }
 }
 
 
-function fall(elem) {
-    for (var i = 150; i >= 0; i--) {
-        elem.position.z = i;
-        //console.log(elem.position.z);
-        renderer.render(scene, camera);
-    }
-}
+//function fall(elem) {
+//    for (var i = 150; i >= 0; i--) {
+//        elem.position.z = i;
+//        //console.log(elem.position.z);
+//        renderer.render(scene, camera);
+//    }
+//}
 
 
 
-var d;
+var d,dy;
 var v = 40;  //f(1000) = 0.2 ; f(20) = 1 =/= 40, it's just a example
-var m;
+var m,z,ex,ez;
 var Step;
 
-function follow(ennemy) {                      //calcul de la distance
+function StepCalc(x){
+    var f = -x/1225 + 249/215;
+    f = f * 20;
+    return f;
+}
 
-    m = camera.position.x;
+var less = false;
+var more = false;
+
+function follow(ennemy) {                      //calcul de la distance
+    m = Math.floor(camera.position.x);
     ex = Math.floor(ennemy.position.x);
-    if (ex > 0) {
-        d = ex - m;
+    if(ex !== m){
+        if (ex > 0 && ex > m) {
+            d = ex - m;
+            less = true;
+            more = false;
+        }
+        else if (ex > 0 && ex < m) {
+            d = m - ex;
+            less = false;
+            more = true;
+        }
+        else if (ex < 0 && ex < m) {
+            d = -ex + m;
+            less = false;
+            more = true;
+        }
+        else if (ex < 0 && ex > m) {
+            d = -m + ex;
+            less = true;
+            more = false;
+        }
+        else if (ex === 0 && m > 0) {
+            d = m;
+            less = false;
+            more = true;
+        }
+        else if (ex === 0 && m < 0) {
+            d = -m;
+            less = true;
+            more = false;
+        }
+        else if(ex === m){
+            less = false;
+            more = false;
+        }
+        if(d > 0){
+            if (d < 1000) {                        //calcul du delay en fonction de la distance
+                Step = StepCalc(d);
+            }
+            else {
+                Step = StepCalc(1000);
+            }
+            if(less){
+                ennemy.position.x -= Step;
+            }
+            if(more){
+                ennemy.position.x += Step;
+            }
+            renderer.render(scene,camera);
+        }
     }
-    else if (ex < 0) {
-        d = -ex + m;
+
+    z = Math.floor(camera.position.z);
+    ez = Math.floor(ennemy.position.z);
+
+    if(z !== ez){
+        if (ez > 0 && ez > z) {
+            dy = ez - z;
+            less = true;
+            more = false;
+        }
+        else if (ez > 0 && ez < z) {
+            dy = z - ez;
+            less = false;
+            more = true;
+        }
+        else if (ez < 0 && ez < z) {
+            dy = -ez + z;
+            less = false;
+            more = true;
+        }
+        else if (ez < 0 && ez > z) {
+            dy = -z + ez;
+            less = true;
+            more = false;
+        }
+        else if (ez === 0 && z > 0) {
+            dy = z;
+            less = false;
+            more = true;
+        }
+        else if (ez === 0 && z < 0) {
+            dy = -z;
+            less = true;
+            more = false;
+        }
+        else if(ez === z){
+            less = false;
+            more = false;
+        }
+        if(dy > 0){
+            if (dy < 1000) {                        //calcul du delay en fonction de la distance
+                Step = StepCalc(dy);
+            }
+            else {
+                Step = StepCalc(1000);
+            }
+            if(less){
+                ennemy.position.z -= Step;
+            }
+            if(more){
+                ennemy.position.z += Step;
+            }
+            renderer.render(scene,camera);
+        }
     }
-    if (d < 1000) {                        //calcul du delay en fonction de la distance
-        Step = d / 20;
+    if(ex === m && ez === z){
+        kill = true;
     }
-    else {
-        Step = 1000 * v;
-    }
-    console.log(ex);
-    ennemy.position.x += Step;
 }
 
 
