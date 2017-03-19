@@ -49,7 +49,7 @@ var less = false;
 var more = false;
 
 function follow(ennemy) {                      //calcul de la distance
-    m = Math.floor(camera.position.x);
+    m = Math.floor(pers.position.x);
     ex = Math.floor(ennemy.position.x);
     if(ex !== m){
         if (ex > 0 && ex > m) {
@@ -103,7 +103,7 @@ function follow(ennemy) {                      //calcul de la distance
         }
     }
 
-    z = Math.floor(camera.position.z);
+    z = Math.floor(pers.position.z);
     ez = Math.floor(ennemy.position.z);
 
     if(z !== ez){
