@@ -8,7 +8,7 @@ var sma = 240;  //taille petit arbre
 var mapL = 15000;
 var mapl = 15000;
 var renderer, scene, camera, small, big, circle, material, pers;
-var intensitythree = 1500;   //plus le nombre est grand moins il y a d'arbre. IL est conseille d'appleque une valeur au dessus de 700
+var intensitythree = 1500;   //bigger the number is, smaller the number of tree is
 var numberofthree = (mapL / intensitythree) * (mapl / intensitythree);
 var camerasensibility = 5;
 var defaultColor = 'white';
@@ -26,12 +26,12 @@ var animation = false;
 var kill = false;
 var intro = true;
 
-var Threelock = true;   //option
+var TreeLock = true;   //option
 var mapLock = true;          //activation 
 var Ennemy = true;      //elements
 
-var BeginNight = 20;  //le mode nuit commence a cette heure la
-var EndNight = 8;     //le mode nuit fini a cette heure la
+var BeginNight = 20;  //The night mode begin at this time
+var EndNight = 8;     //The night mode end at this time
 
 
 var i = 0;
@@ -40,7 +40,7 @@ function init() {
     var k = 0;
     //document.getElementById('turnOn').style.height = '0px';
     //document.getElementById('turnOn').style.lineHeight = '0px';
-    console.log("arbre: " + Threelock);
+    console.log("arbre: " + TreeLock);
     console.log("ennemie: " + Ennemy);
     console.log("map: " + mapLock);
     var now = new Date();
@@ -93,13 +93,12 @@ function init() {
 
 
     //OBJECT
-    if (Threelock) {
+    if (TreeLock) {
 
         big = new THREE.CubeGeometry(90, sma, 90);
         small = new THREE.CubeGeometry(90, sma, 90);
         circle = new THREE.SphereGeometry(100, 50, 50);
         generateThree(numberofthree);
-        //generateThree(50);
         console.log(numberofthree);
     }
     if (mapLock) {

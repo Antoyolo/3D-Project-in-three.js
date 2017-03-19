@@ -34,13 +34,12 @@ function AddEnnemy(number) {
 
 
 
-var d,dy;
-var v = 40;  //f(1000) = 0.2 ; f(20) = 1 =/= 40, it's just a example
+var d,dy;  
 var m,z,ex,ez;
 var Step;
 
 function StepCalc(x){
-    var f = -x/1225 + 249/215;
+    var f = -x/1225 + 249/215;  //f(1000) = 0.2 ; f(20) = 1
     f = f * 20;
     return f;
 }
@@ -48,7 +47,7 @@ function StepCalc(x){
 var less = false;
 var more = false;
 
-function follow(ennemy) {                      //calcul de la distance
+function follow(ennemy) {                      //calculation of distance
     m = Math.floor(pers.position.x);
     ex = Math.floor(ennemy.position.x);
     if(ex !== m){
@@ -87,7 +86,7 @@ function follow(ennemy) {                      //calcul de la distance
             more = false;
         }
         if(d > 0){
-            if (d < 1000) {                        //calcul du delay en fonction de la distance
+            if (d < 1000) {                        //calculation of the size of the step
                 Step = StepCalc(d);
             }
             else {
@@ -142,7 +141,7 @@ function follow(ennemy) {                      //calcul de la distance
             more = false;
         }
         if(dy > 0){
-            if (dy < 1000) {                        //calcul du delay en fonction de la distance
+            if (dy < 1000) {                        //calculation of the size of the step
                 Step = StepCalc(dy);
             }
             else {
@@ -211,3 +210,4 @@ function sunMove() {
 
 
 
+//thes guittan
